@@ -17,12 +17,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-//import android.support.v7.app.AppCompatActivity;
-
 public class Main2Activity extends AppCompatActivity {
 
     public final static String TEXT = "Text";
     public final static String TEXT1 = "Text1";
+    public final static String EXTRA_STATE = "EXTRA_STATE";
     private static String ITEM = "item";
     //private static final String TEXT1 = ;
     public String city;
@@ -39,8 +38,9 @@ public class Main2Activity extends AppCompatActivity {
     // int position;
     Intent intent;
     public int ss;
-   public long itemId;
+    public long itemId;
     private View itemView;
+    private State selectedState;
 
 
     @Override
@@ -52,9 +52,7 @@ public class Main2Activity extends AppCompatActivity {
         TextView nameState = findViewById(R.id.name_State);
 
 //        String stringCapital = nameCapital.getText().toString();
-  //      String stringState = nameState.getText().toString();
-
-
+        //      String stringState = nameState.getText().toString();
 
 
         cityText = findViewById(R.id.TIET);
@@ -63,7 +61,6 @@ public class Main2Activity extends AppCompatActivity {
         Spinner spinner = findViewById(R.id.spinner);
         checkTypeWeather(switch2);
         selectCity(spinner);
-
 
         setInitialData();
 
@@ -87,10 +84,12 @@ public class Main2Activity extends AppCompatActivity {
         intent.putExtra(TEXT1, String.valueOf(ss));
 
         intent.putExtra(ITEM, String.valueOf(itemView));
-        //intent.putExtra("list", String.valueOf(countriesList.getContext()));
+        if (selectedState != null) {
+           intent.putExtra(EXTRA_STATE, selectedState);
+        }
 
         if (city.equals("")) {
-           showToast(v);
+            showToast(v);
         } else startActivity(intent);
 
 
@@ -99,7 +98,6 @@ public class Main2Activity extends AppCompatActivity {
 
     public void stateList() {
 
-
         final StateAdapter stateAdapter = new StateAdapter(this, R.layout.list_item, states);
         this.countriesList = findViewById(R.id.countriesList);
         this.countriesList.setAdapter(stateAdapter);
@@ -107,19 +105,14 @@ public class Main2Activity extends AppCompatActivity {
         AdapterView.OnItemSelectedListener itemSelectedListener = new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
-
-                State selectedState = (State) parent.getItemAtPosition(position);
-                //State selectedState = (State) parent.getSelectedItemId(id.);
-               ss = position;
+                selectedState = (State) parent.getItemAtPosition(position);
+                ss = position;
                 itemId = stateAdapter.getItemId(position);
-                itemView = stateAdapter.getView(position,countriesList,parent);
+
+                itemView = stateAdapter.getView(position, countriesList, parent);
                 Toast toast1 = Toast.makeText(getApplicationContext(), selectedState.getName(), Toast.LENGTH_SHORT);
                 toast1.show();
-
-
             }
-
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -146,11 +139,7 @@ public class Main2Activity extends AppCompatActivity {
 
             public void onNothingSelected(AdapterView<?> parent) {
             }
-
-
         });
-
-
     }
 
     public void setInitialData() {
@@ -159,7 +148,6 @@ public class Main2Activity extends AppCompatActivity {
         states.add(new State("Колумбия", "Богота", R.drawable.colombia));
         states.add(new State("Уругвай", "Монтевидео", R.drawable.uruguai));
         states.add(new State("Чили", "Сантьяго", R.drawable.chile));
-
     }
 
     private void checkTypeWeather(Switch switch2) {

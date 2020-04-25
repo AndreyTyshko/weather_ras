@@ -9,6 +9,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import static com.example.weather.Main2Activity.EXTRA_STATE;
 import static com.example.weather.Main2Activity.TEXT;
 import static com.example.weather.Main2Activity.TEXT1;
 
@@ -26,21 +28,17 @@ import static com.example.weather.Main2Activity.TEXT1;
 public class MainActivity extends AppCompatActivity {
 
 
-    public List<State> states = new ArrayList<>();
-    ListView countriesList;
+    private List<State> states = new ArrayList<>();
+    private ListView countriesList;
     private Object State;
 
     String country;
+    private State state;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
-       /* TextView textView1 = new TextView(this);
-        textView1.setTextSize(20);
-        textView1.setPadding(16, 16, 16, 16);*/
 
 
         TextView cityText = findViewById(R.id.city);
@@ -49,8 +47,6 @@ public class MainActivity extends AppCompatActivity {
 
         TextView textView = findViewById(R.id.typeOfWeather);
         textView.setText(tow);
-
-
 
         TextView textViewDate = findViewById(R.id.textViewDate);
         TextView textViewWind = findViewById(R.id.typeOfWind);
@@ -67,20 +63,22 @@ public class MainActivity extends AppCompatActivity {
         textViewWind.setText(send.windText);
 
 
-       Intent intent = getIntent();
+        Intent intent = getIntent();
 
-     // ArrayList<String> arrayFromIntent =(ArrayList<String>) getIntent().getSerializableExtra("list");
+        // ArrayList<String> arrayFromIntent =(ArrayList<String>) getIntent().getSerializableExtra("list");
 
         country = intent.getStringExtra(TEXT1);
+        state = (State) intent.getSerializableExtra(EXTRA_STATE);
+        if (state != null) {
+            Toast.makeText(this, state.getName(), Toast.LENGTH_SHORT).show();
+    }
+//
+//        Toast toast1 = Toast.makeText(getApplicationContext(), country, Toast.LENGTH_SHORT);
+//        toast1.show();
+//        // Integer text = Integer.valueOf(country);
 
 
-
-        Toast toast1 = Toast.makeText(getApplicationContext(), country, Toast.LENGTH_SHORT);
-        toast1.show();
-       // Integer text = Integer.valueOf(country);
-
-
-        stateList();
+    stateList();
         //setInitialData();
     }
 
@@ -92,13 +90,10 @@ public class MainActivity extends AppCompatActivity {
 
         //stateAdapter.getPosition(2);
 
-      countriesList.setAdapter(stateAdapter);
+        countriesList.setAdapter(stateAdapter);
 //stateAdapter.getView(2,View convertView, ViewGroup parent);
 
-       //countriesList.getItemAtPosition(Integer.parseInt(country));
-
-
-
+        //countriesList.getItemAtPosition(Integer.parseInt(country));
     }
 
 
@@ -108,7 +103,6 @@ public class MainActivity extends AppCompatActivity {
         states.add(new State("Колумбия", "Богота", R.drawable.colombia));
         states.add(new State("Уругвай", "Монтевидео", R.drawable.uruguai));
         states.add(new State("Чили", "Сантьяго", R.drawable.chile));
-
     }
 
 

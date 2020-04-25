@@ -19,14 +19,13 @@ public class StateAdapter extends ArrayAdapter {
     private int layout;
     private List<State> states;
 
-    public StateAdapter(Context context, int resource, List<State> states) {
+    StateAdapter(Context context, int resource, List<State> states) {
         super(context, resource, states);
 
         this.states = states;
         this.layout = resource;
         this.inflater = LayoutInflater.from(context);
     }
-
 
     @NonNull
     @Override
@@ -39,14 +38,10 @@ public class StateAdapter extends ArrayAdapter {
         return getView(position, convertView, parent);
     }
 
-
     @Override
     public long getItemId(int position) {
         return super.getItemId(position);
     }
-
-
-
 
     public View getView(int position, View convertView, ViewGroup parent) {
 
