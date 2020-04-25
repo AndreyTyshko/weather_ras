@@ -15,7 +15,9 @@ private  int flagResource;
     this.name=name;
     this.capital=capital;
     this.flagResource=flagResource;
-//dfglsjegls
+//sfgegdgda
+        //sdfasdfsafasdf
+        ////asdfasdfdsf
 
 }
 
