@@ -1,26 +1,19 @@
 package com.example.weather;
 
-import android.support.annotation.NonNull;
+import java.io.Serializable;
 
-public class State {
+public class State implements Serializable {
 
-private String name;
-private  String capital;
-private  int flagResource;
-
-
+    private String name;
+    private String capital;
+    private int flagResource;
 
 
-    public State(String name, String capital, int flagResource){
-    this.name=name;
-    this.capital=capital;
-    this.flagResource=flagResource;
-//sfgegdgda
-        //sdfasdfsafasdf
-        ////asdfasdfdsf
-
-}
-
+    public State(String name, String capital, int flagResource) {
+        this.name = name;
+        this.capital = capital;
+        this.flagResource = flagResource;
+    }
 
 
     public String getName() {
