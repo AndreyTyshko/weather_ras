@@ -2,100 +2,162 @@ package com.example.weather;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.Serializable;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import static com.example.weather.Main2Activity.EXTRA_STATE;
-import static com.example.weather.Main2Activity.TEXT;
-import static com.example.weather.Main2Activity.TEXT1;
-
-//import static com.example.weather.Main2Activity.POSITION;
-//import static com.example.weather.Main2Activity.TEXT1;
-
 
 public class MainActivity extends AppCompatActivity {
 
+    public final static String TEXT = "Text";
+    public final static String TEXT1 = "Text1";
+    public final static String EXTRA_STATE = "EXTRA_STATE";
+    private static String ITEM = "item";
+    //private static final String TEXT1 = ;
+    public String city;
+    public String wind;
+    public String txtSwitch;
 
-    private List<State> states = new ArrayList<>();
-    private ListView countriesList;
-    private Object State;
+    TextInputEditText cityText;
+    Switch switch2;
 
-    String country;
-    private State state;
+    private String spinnerText;
+
+    public ArrayList<State> states = new ArrayList<>();
+    Spinner countriesList;
+    // int position;
+    Intent intent;
+    Intent mIntent;
+    public int ss;
+    public long itemId;
+    private View itemView;
+    private State selectedState;
+    private Button mButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        TextView nameCapital = findViewById(R.id.capital);
+        TextView nameState = findViewById(R.id.name_State);
 
-        TextView cityText = findViewById(R.id.city);
+//        String stringCapital = nameCapital.getText().toString();
+        //      String stringState = nameState.getText().toString();
 
-        String tow = getResources().getString(R.string.typeOfWear);
+        mButton = findViewById(R.id.button2);
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mIntent = new Intent(MainActivity.this, Fragment_Activity.class);
 
-        TextView textView = findViewById(R.id.typeOfWeather);
-        textView.setText(tow);
-
-        TextView textViewDate = findViewById(R.id.textViewDate);
-        TextView textViewWind = findViewById(R.id.typeOfWind);
-
-        Date currentDate = new Date();
-        // Форматирование времени как "день.месяц.год"
-        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
-        String dateText = dateFormat.format(currentDate);
-        textViewDate.setText(dateText);
-
-
-        Send send = (Send) getIntent().getExtras().getSerializable(TEXT);
-        cityText.setText(send.textCity);
-        textViewWind.setText(send.windText);
+                mIntent.putExtra(ITEM, String.valueOf(itemView));
+                if (selectedState != null) {
+                    mIntent.putExtra(EXTRA_STATE, selectedState);
+                }
 
 
-        Intent intent = getIntent();
+                startActivity(mIntent);
 
-        // ArrayList<String> arrayFromIntent =(ArrayList<String>) getIntent().getSerializableExtra("list");
+            }
+        });
 
-        country = intent.getStringExtra(TEXT1);
-        state = (State) intent.getSerializableExtra(EXTRA_STATE);
-        if (state != null) {
-            Toast.makeText(this, state.getName(), Toast.LENGTH_SHORT).show();
+
+        cityText = findViewById(R.id.TIET);
+
+        switch2 = findViewById(R.id.switch2);
+        Spinner spinner = findViewById(R.id.spinner);
+        checkTypeWeather(switch2);
+        selectCity(spinner);
+
+        setInitialData();
+
+        stateList();
+//countriesList.setOnItemSelectedListener((AdapterView.OnItemSelectedListener) this);
+
     }
-//
-//        Toast toast1 = Toast.makeText(getApplicationContext(), country, Toast.LENGTH_SHORT);
-//        toast1.show();
-//        // Integer text = Integer.valueOf(country);
+
+    public void onClick(View v) {
+        Send send = new Send();
+        send.textCity = cityText.getText().toString();
+        if (switch2.isChecked()) {
+            send.windText = switch2.getText().toString();
+        }
+
+        city = cityText.getText().toString();
+        intent = new Intent(this.getApplicationContext(), SecondActivity.class);
 
 
-    stateList();
-        //setInitialData();
+        intent.putExtra(TEXT, send);
+        intent.putExtra(TEXT1, String.valueOf(ss));
+
+        intent.putExtra(ITEM, String.valueOf(itemView));
+        if (selectedState != null) {
+            intent.putExtra(EXTRA_STATE, selectedState);
+        }
+
+        if (city.equals("")) {
+            showToast(v);
+        } else startActivity(intent);
+
+
     }
 
 
     public void stateList() {
-        countriesList = findViewById(R.id.countriesList);
-        StateAdapter stateAdapter = new StateAdapter(this, R.layout.list_item, states);
 
+        final StateAdapter stateAdapter = new StateAdapter(this, R.layout.list_item, states);
+        this.countriesList = findViewById(R.id.countriesList);
+        this.countriesList.setAdapter(stateAdapter);
 
-        //stateAdapter.getPosition(2);
+        AdapterView.OnItemSelectedListener itemSelectedListener = new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedState = (State) parent.getItemAtPosition(position);
+                ss = position;
+                itemId = stateAdapter.getItemId(position);
 
-        countriesList.setAdapter(stateAdapter);
-//stateAdapter.getView(2,View convertView, ViewGroup parent);
+                itemView = stateAdapter.getView(position, countriesList, parent);
+                Toast toast1 = Toast.makeText(getApplicationContext(), selectedState.getName(), Toast.LENGTH_SHORT);
+                toast1.show();
+            }
 
-        //countriesList.getItemAtPosition(Integer.parseInt(country));
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        };
+
+        countriesList.setOnItemSelectedListener(itemSelectedListener);
+
     }
 
+
+    private void selectCity(final Spinner spinner) {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View itemSelected, int selectedItemPosition, long Id) {
+
+                String[] choose = getResources().getStringArray(R.array.cityList);
+                Toast toast = Toast.makeText(getApplicationContext(), "Ваш выбор: " + choose[selectedItemPosition], Toast.LENGTH_SHORT);
+                toast.show();
+
+                spinnerText = spinner.getSelectedItem().toString();
+                cityText.setText(spinnerText);
+            }
+
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
 
     public void setInitialData() {
         states.add(new State("Бразилия", "Бразилиа", R.drawable.brazilia));
@@ -105,8 +167,25 @@ public class MainActivity extends AppCompatActivity {
         states.add(new State("Чили", "Сантьяго", R.drawable.chile));
     }
 
+    private void checkTypeWeather(Switch switch2) {
+        switch2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+
+                    txtSwitch = "Ветренно";
+                    Toast.makeText(getApplicationContext(), "Включено", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getApplicationContext(), "Выключено", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+    }
+
+    public void showToast(View view) {
+        Toast mToast = Toast.makeText(getApplicationContext(), "Ведите текст", Toast.LENGTH_SHORT);
+        mToast.show();
+    }
+
 
 }
-
-
-
